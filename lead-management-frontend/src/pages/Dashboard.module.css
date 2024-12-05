@@ -1,0 +1,16 @@
+.dashboard {
+  padding: 2rem;
+}
+
+.dashboard h2 {
+  color: #007bff;
+  margin-bottom: 1rem;
+}
+
+.dashboard input[type="text"] {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
