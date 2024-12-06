@@ -1,4 +1,4 @@
-.table {
+table {
   width: 100%;
   border-collapse: collapse;
   margin: 1rem 0;
@@ -6,21 +6,21 @@
   text-align: left;
 }
 
-.table th, .table td {
+table th, .table td {
   padding: 0.8rem;
   border: 1px solid #ddd;
 }
 
-.table th {
+table th {
   background-color: #007bff;
   color: white;
 }
 
-.table tbody tr:hover {
+table tbody tr:hover {
   background-color: #f9f9f9;
 }
 
-.table button {
+table button {
   padding: 0.4rem 0.8rem;
   margin: 0.2rem;
   border: none;
@@ -28,12 +28,12 @@
   cursor: pointer;
 }
 
-.table button.edit {
+table button.edit {
   background-color: #28a745;
   color: white;
 }
 
-.table button.delete {
+table button.delete {
   background-color: #dc3545;
   color: white;
 }

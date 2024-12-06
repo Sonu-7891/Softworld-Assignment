@@ -25,25 +25,42 @@ const registerUser = async (req, res) => { // controller for register route
 };
 
 const loginUser = async (req, res) => {
-  // controller for login route
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email }); //find the user by email
+    const user = await User.findOne({ email });
     if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
-    refreshTokens.push(refreshToken);
 
-    res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
-    res.json({ accessToken });
+    // Store refreshToken in a persistent store (e.g., database or Redis)
+    await User.updateOne({ _id: user._id }, { $set: { refreshToken } });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Only secure in production
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    res.json({
+      accessToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Login Error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 const refreshToken = (req, res) => {
   const token = req.cookies.refreshToken;

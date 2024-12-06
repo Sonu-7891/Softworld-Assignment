@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { register } from "../redux/actions/authActions";
+import { registerUser } from "../api/leadsApi";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import "./Form.module.css";
 
 const Register = () => {
@@ -12,20 +12,16 @@ const Register = () => {
     role: "user", // Default role
   });
 
-  const dispatch = useDispatch();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(register(formData));
-      toast.success("Registration successful!");
+      await registerUser(formData); // Pass formData with role included
+      toast.success("Registration successful. Please log in.");
+      navigate("/login");
     } catch (err) {
-      toast.error("Failed to register. Please try again.");
+      toast.error(err.response?.data?.message || "Registration failed.");
     }
   };
 
@@ -34,36 +30,33 @@ const Register = () => {
       <h2>Register</h2>
       <input
         type="text"
-        name="name"
         placeholder="Name"
         value={formData.name}
-        onChange={handleChange}
+        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         required
       />
       <input
         type="email"
-        name="email"
         placeholder="Email"
         value={formData.email}
-        onChange={handleChange}
+        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         required
       />
       <input
         type="password"
-        name="password"
         placeholder="Password"
         value={formData.password}
-        onChange={handleChange}
+        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         required
       />
       <select
-        name="role"
         value={formData.role}
-        onChange={handleChange}
+        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
         required
       >
         <option value="user">User</option>
         <option value="admin">Admin</option>
+        {/* Add more roles if needed */}
       </select>
       <button type="submit">Register</button>
     </form>

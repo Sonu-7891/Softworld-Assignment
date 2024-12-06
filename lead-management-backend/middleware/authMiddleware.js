@@ -10,7 +10,7 @@ const protect = (req, res, next) => { // check the routes if the access token av
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(401).json({ message: "Token is invalid or expired" });
+    res.status(401).json({ message: "session expired" });
   }
 };
 

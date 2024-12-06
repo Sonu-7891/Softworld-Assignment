@@ -1,4 +1,4 @@
-.header {
+header {
   background-color: #007bff;
   padding: 1rem 2rem;
   color: white;
@@ -7,19 +7,19 @@
   align-items: center;
 }
 
-.header h1 {
+header h1 {
   font-size: 1.5rem;
   margin: 0;
 }
 
 
-.header nav a {
+header nav a {
   color: white;
   padding: 10px;
   text-decoration: none;
   font-size: 1rem;
 }
 
-.header nav a:hover {
+header nav a:hover {
   text-decoration: underline;
 }

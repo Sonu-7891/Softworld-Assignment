@@ -1,18 +1,15 @@
 import React from "react";
 
-
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-
   return (
-    <div className="pagination">
-      {pages.map((page) => (
+    <div>
+      {Array.from({ length: totalPages }, (_, i) => (
         <button
-          key={page}
-          className={page === currentPage ? "active" : ""}
-          onClick={() => onPageChange(page)}
+          key={i}
+          onClick={() => onPageChange(i + 1)}
+          disabled={currentPage === i + 1}
         >
-          {page}
+          {i + 1}
         </button>
       ))}
     </div>

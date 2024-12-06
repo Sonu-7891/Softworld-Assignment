@@ -1,21 +1,33 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { login } from "../redux/actions/authActions";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { loginUser } from "../api/leadsApi";
 import { toast } from "react-toastify";
-import "./Form.module.css"
+import { useNavigate } from "react-router-dom";
+import "./Form.module.css";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const dispatch = useDispatch();
+  const { login } = useContext(AuthContext);
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
-      await dispatch(login({ email, password }));
-      toast.success("Login successful!");
+      const { data } = await loginUser(formData);
+      login(data.user, data.accessToken);
+      toast.success("Login successful");
+      navigate("/dashboard");
     } catch (err) {
-      toast.error("Invalid credentials. Please try again.");
+      console.error("Login Error:", err);
+      const errorMessage =
+        err.response?.data?.message ||
+        "Something went wrong. Please try again.";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -25,18 +37,20 @@ const Login = () => {
       <input
         type="email"
         placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        value={formData.email}
+        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         required
       />
       <input
         type="password"
         placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        value={formData.password}
+        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         required
       />
-      <button type="submit">Login</button>
+      <button type="submit" disabled={loading}>
+        {loading ? "Logging in..." : "Login"}
+      </button>
     </form>
   );
 };

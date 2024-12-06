@@ -20,12 +20,14 @@ export const fetchLeads =
   async (dispatch) => {
     dispatch({ type: FETCH_LEADS_REQUEST });
     try {
-      const { data } = await fetchLeadsAPI(queryParams);
+      const response = await fetchLeadsAPI(queryParams);
+      const {data} = response
       dispatch({ type: FETCH_LEADS_SUCCESS, payload: data });
     } catch (error) {
+      console.error("Error fetching leads:", error);
       dispatch({
         type: FETCH_LEADS_FAILURE,
-        payload: error.response.data.message,
+        payload: error.response?.data?.message || "Something went wrong",
       });
     }
   };

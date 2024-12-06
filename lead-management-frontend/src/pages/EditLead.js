@@ -1,43 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { createLead, updateLead, fetchLeads } from "../api/leadsApi";
+import { fetchLead, updateLead, createLead } from "../api/leadsApi";
 import { toast } from "react-toastify";
 
 const EditLead = () => {
-  const { id } = useParams(); // Fetch the lead ID from the URL
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     leadName: "",
-    contactNumber: "",
     email: "",
-    address: "",
+    contactNumber: "",
     status: "new",
-    leadSource: "",
     nextFollowUpDate: "",
     nextFollowUpTime: "",
-    customerType: "individual",
-    purchaseHistory: [],
-    medicalNeeds: "",
   });
-
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
-      // Fetch existing lead details for editing
       setLoading(true);
-      fetchLeads(`id=${id}`)
+      fetchLead(id)
         .then(({ data }) => setFormData(data))
-        .catch(() => toast.error("Failed to load lead data"))
+        .catch(() => toast.error("Failed to load lead details."))
         .finally(() => setLoading(false));
     }
   }, [id]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,64 +43,41 @@ const EditLead = () => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-
-  return (
+  return loading ? (
+    <p>Loading...</p>
+  ) : (
     <form onSubmit={handleSubmit}>
       <h2>{id ? "Edit Lead" : "Create Lead"}</h2>
       <input
         type="text"
-        name="leadName"
         placeholder="Lead Name"
         value={formData.leadName}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="text"
-        name="contactNumber"
-        placeholder="Contact Number"
-        value={formData.contactNumber}
-        onChange={handleChange}
+        onChange={(e) => setFormData({ ...formData, leadName: e.target.value })}
         required
       />
       <input
         type="email"
-        name="email"
         placeholder="Email"
         value={formData.email}
-        onChange={handleChange}
+        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
       />
       <input
         type="text"
-        name="address"
-        placeholder="Address"
-        value={formData.address}
-        onChange={handleChange}
+        placeholder="Contact Number"
+        value={formData.contactNumber}
+        onChange={(e) =>
+          setFormData({ ...formData, contactNumber: e.target.value })
+        }
+        required
       />
-      <select name="status" value={formData.status} onChange={handleChange}>
+      <select
+        value={formData.status}
+        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+      >
         <option value="new">New</option>
-        <option value="in-progress">In-Progress</option>
+        <option value="in-progress">In Progress</option>
         <option value="closed">Closed</option>
       </select>
-      <input
-        type="date"
-        name="nextFollowUpDate"
-        value={formData.nextFollowUpDate}
-        onChange={handleChange}
-      />
-      <input
-        type="time"
-        name="nextFollowUpTime"
-        value={formData.nextFollowUpTime}
-        onChange={handleChange}
-      />
-      <textarea
-        name="medicalNeeds"
-        placeholder="Medical Needs"
-        value={formData.medicalNeeds}
-        onChange={handleChange}
-      />
       <button type="submit">{id ? "Update Lead" : "Create Lead"}</button>
     </form>
   );
